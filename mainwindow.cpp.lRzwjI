@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,32 +7,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ecs = new ECS(3,7);
-
-    for (int i = 0; i < ecs->elevatorNum; ++i) {
-            ElevatorThread *thread = new ElevatorThread(ecs->getElevator(i), ecs);
-            elevatorThreads.push_back(thread);
-            connect(thread, SIGNAL(onChanged()), this, SLOT(updateDisplays()));
-            thread->start();
-        }
-
     onStartup();
 
 }
 
 MainWindow::~MainWindow()
 {
-    for (ElevatorThread *thread : elevatorThreads) {
-           thread->stopThread();
-           thread->wait();
-           delete thread;
-    }
     delete ui;
     delete ecs;
-}
-
-void MainWindow::updateDisplays(){
-    resetTable();
-
 }
 
 void MainWindow::onStartup(){
@@ -57,7 +38,6 @@ void MainWindow::onStartup(){
 }
 
 void MainWindow::resetTable(){
-    ui->FPETable->clear();
     ui->FPETable->setRowCount(ecs->floorNum);
     for(int i = 0;  i < ecs->floorNum; i++){
         vector<int> v = ecs->getFloorStats(i)->getPassengerNums();
@@ -81,8 +61,6 @@ void MainWindow::resetTable(){
         QString floorname = "Floor " + QString::number(i+1);
         ui->FPETable->setItem(i,0,new QTableWidgetItem(floorname));
     }
-
-
     ui->SPfloor->clear();
     ui->spawnFloor->clear();
     for(int i = 0; i<ecs->floorNum; i++){
@@ -98,7 +76,6 @@ void MainWindow::resetTable(){
     for(int i = 0; i<ecs->elevatorNum; i++){
         ui->requestTester->setItem(i,0,new QTableWidgetItem(QString::number(i+1)));
     }
-    //qDebug() << "Finished";
 }
 
 
@@ -139,6 +116,7 @@ void MainWindow::on_pushButton_clicked()
 {
     ecs->spawnPassenger(ui->spawnFloor->currentIndex());
     resetTable();
+
 }
 
 
@@ -149,9 +127,10 @@ void MainWindow::on_SPsend_clicked()
         return;
     }
     ui->SendError->setText("");
+    ui->SendError->setText(QString(ui->SPpassenger->currentIndex()));
+    return;
     int fnum = ui->SPfloor->currentIndex();
     Passenger* p = ecs->getPassenger(ui->SPpassenger->currentIndex());
-    p->setDesiredFloor(fnum);
     Request* req = new Request(ecs->getFloorStats(p->getCurrentFloor()));
     ecs->floorRequest(req);
     Elevator* el = ecs->dollOutRequest(req);

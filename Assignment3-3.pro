@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     ECS.cpp \
     Elevator.cpp \
+    ElevatorThread.cpp \
     Floor.cpp \
     Passenger.cpp \
     Request.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 HEADERS += \
     ECS.h \
     Elevator.h \
+    ElevatorThread.h \
     Floor.h \
     Passenger.h \
     Request.h \

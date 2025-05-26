@@ -4,12 +4,10 @@
 class Request{
     private:
         Floor* floor;
-        bool direction;
     public:
-        Request(Floor*,bool);
+        Request(Floor*);
         ~Request();
         int getFloor();
-        bool getDirection();
 };
 
 #endif

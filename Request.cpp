@@ -1,9 +1,8 @@
 #include "Request.h"
 
-Request::Request(Floor* floorvar, bool dir)
+Request::Request(Floor* floorvar)
 {
     floor = floorvar;
-    direction = dir;
 }
 
 Request::~Request(){
@@ -12,8 +11,4 @@ Request::~Request(){
 
 int Request::getFloor(){
     return floor->getFloorNum();
-}
-
-bool Request::getDirection(){
-    return direction;
 }
